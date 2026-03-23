@@ -46,8 +46,8 @@ tusb_desc_device_t desc_device = {
     .bDeviceProtocol = 0x00,
     .bMaxPacketSize0 = CFG_TUD_ENDPOINT0_SIZE,
 
-    .idVendor = USB_VID,
-    .idProduct = USB_PID,
+    .idVendor = 0x05F3,  // VEC
+    .idProduct = 0x00FF, // Footpedal
     .bcdDevice = 0x0100,
 
     .iManufacturer = 0x01,
