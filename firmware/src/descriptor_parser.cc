@@ -34,6 +34,13 @@ void mark_usage(
     uint32_t index = 0,
     uint32_t count = 0,
     uint32_t usage_maximum = 0) {
+
+    // --- ADD THIS TO IGNORE VEC PEDAL USAGES ---
+    if (report_id == 9) {
+        return;
+    }
+    // -------------------------------------------
+    
     if (bitpos >= (8 * ((report_id == 0) ? 64 : 63))) {
         // We don't currently handle reports longer than 64 bytes so let's save some memory.
         // It's probably a broken descriptor anyway.
