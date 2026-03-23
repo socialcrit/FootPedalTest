@@ -1391,6 +1391,57 @@ void process_mapping(bool auto_repeat) {
         }
     }
 
+
+    // =====================================================================
+    // --- VEC FOOT PEDAL HIJACK ---
+    // =====================================================================
+    static uint8_t last_vec_state = 0;
+    uint8_t current_vec_state = 0;
+    
+    // F22 = Usage 0x0007006F (Left Pedal)
+    auto f22_it = our_usages_flat.find(0x0007006F);
+    if (f22_it != our_usages_flat.end()) {
+        if (get_bits((uint8_t*)reports[f22_it->second.report_id], report_sizes[f22_it->second.report_id], f22_it->second.bitpos, f22_it->second.size)) {
+            current_vec_state |= 0b001; 
+        }
+        put_bits((uint8_t*)reports[f22_it->second.report_id], report_sizes[f22_it->second.report_id], f22_it->second.bitpos, f22_it->second.size, 0); // Erase F22
+    }
+    
+    // F23 = Usage 0x00070070 (Center Pedal)
+    auto f23_it = our_usages_flat.find(0x00070070);
+    if (f23_it != our_usages_flat.end()) {
+        if (get_bits((uint8_t*)reports[f23_it->second.report_id], report_sizes[f23_it->second.report_id], f23_it->second.bitpos, f23_it->second.size)) {
+            current_vec_state |= 0b010;
+        }
+        put_bits((uint8_t*)reports[f23_it->second.report_id], report_sizes[f23_it->second.report_id], f23_it->second.bitpos, f23_it->second.size, 0); // Erase F23
+    }
+
+    // F24 = Usage 0x00070071 (Right Pedal)
+    auto f24_it = our_usages_flat.find(0x00070071);
+    if (f24_it != our_usages_flat.end()) {
+        if (get_bits((uint8_t*)reports[f24_it->second.report_id], report_sizes[f24_it->second.report_id], f24_it->second.bitpos, f24_it->second.size)) {
+            current_vec_state |= 0b100;
+        }
+        put_bits((uint8_t*)reports[f24_it->second.report_id], report_sizes[f24_it->second.report_id], f24_it->second.bitpos, f24_it->second.size, 0); // Erase F24
+    }
+
+    // If the pedal state changed, queue Report ID 9 to send to the PC
+    if (current_vec_state != last_vec_state) {
+        if (or_items < OR_BUFSIZE) {
+            outgoing_reports[or_tail][0] = 9;                 // Report ID
+            outgoing_reports[or_tail][1] = current_vec_state; // Buttons + 5bit padding
+            outgoing_reports[or_tail][2] = 0x00;              // 8bit padding
+            or_tail = (or_tail + 1) % OR_BUFSIZE;
+            or_items++;
+            last_vec_state = current_vec_state;
+        }
+    }
+    // =====================================================================
+    // --- END HIJACK ---
+    // =====================================================================
+
+    
+    
     for (unsigned int i = 0; i < report_ids.size(); i++) {  // XXX what order should we go in? maybe keyboard first so that mappings to ctrl-left click work as expected?
         uint8_t report_id = report_ids[i];
         if (our_descriptor->sanitize_report != nullptr) {
