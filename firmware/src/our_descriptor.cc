@@ -136,6 +136,27 @@ const uint8_t our_report_descriptor_kb_mouse[] = {
     0x95, 0x01,                //   Report Count (1)
     0x81, 0x02,                //   Input (Data,Var,Abs,No Wrap,Linear,Preferred State,No Null Position)
     0xC0,                      // End Collection
+
+// --- VEC Footpedal Emulation ---
+    0x05, 0x0C,        // Usage Page (Consumer)
+    0x09, 0x03,        // Usage (Programmable Buttons)
+    0xA1, 0x01,        // Collection (Application)
+    0x85, 0x09,        //   Report ID (9) 
+    0x05, 0x09,        //   Usage Page (Button)
+    0x19, 0x01,        //   Usage Minimum (1)
+    0x29, 0x03,        //   Usage Maximum (3)
+    0x15, 0x00,        //   Logical Minimum (0)
+    0x25, 0x01,        //   Logical Maximum (1)
+    0x95, 0x03,        //   Report Count (3)
+    0x75, 0x01,        //   Report Size (1)
+    0x81, 0x02,        //   Input (Data,Var,Abs)
+    0x95, 0x01,        //   Report Count (1)
+    0x75, 0x05,        //   Report Size (5 padding)
+    0x81, 0x01,        //   Input (Const,Array,Abs)
+    0x95, 0x01,        //   Report Count (1)
+    0x75, 0x08,        //   Report Size (8 padding)
+    0x81, 0x01,        //   Input (Const,Array,Abs)
+    0xC0,              // End Collection
 };
 
 const uint8_t our_report_descriptor_absolute[] = {
